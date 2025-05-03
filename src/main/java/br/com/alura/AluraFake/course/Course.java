@@ -7,18 +7,25 @@ import org.springframework.util.Assert;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "courses")
 public class Course {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
     private String title;
     private String description;
+
     @ManyToOne
     private User instructor;
+    
     @Enumerated(EnumType.STRING)
     private Status status;
+
+    @Column(name = "published_at")
     private LocalDateTime publishedAt;
 
     @Deprecated

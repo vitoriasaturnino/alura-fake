@@ -1,0 +1,5 @@
+CREATE TABLE single_choice_tasks (
+    id bigint(20) NOT NULL,
+    PRIMARY KEY (id),
+    CONSTRAINT FK_SingleChoiceTask_Task FOREIGN KEY (id) REFERENCES tasks(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;

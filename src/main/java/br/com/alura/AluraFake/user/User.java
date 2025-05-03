@@ -6,16 +6,23 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "users")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
+
     private String name;
+
     @Enumerated(EnumType.STRING)
     private Role role;
+
     private String email;
+
     // Por questões didáticas, a senha será armazenada em texto plano.
     private String password;
 
