@@ -33,4 +33,41 @@ public abstract class Task {
     @Enumerated(EnumType.STRING)
     @Column(name = "task_type", nullable = false, insertable = false, updatable = false)
     private Type type;
+
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public Course getCourse() {
+        return course;
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
+    }
+
+    public String getStatement() {
+        return statement;
+    }
+
+    public void setStatement(String statement) {
+        this.statement = statement;
+    }
+
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
+    public Type getType() {
+        return type;
+    }
 }

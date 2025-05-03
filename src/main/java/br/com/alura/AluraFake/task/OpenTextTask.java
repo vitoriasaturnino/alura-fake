@@ -4,4 +4,5 @@ import jakarta.persistence.Entity;
 
 @Entity
 public class OpenTextTask extends Task {
+    // Nenhum campo adicional
 }
