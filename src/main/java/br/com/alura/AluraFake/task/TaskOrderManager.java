@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Service
+@Service // Certifique-se de que esta anotação está presente
 public class TaskOrderManager {
 
     private final TaskRepository taskRepository;

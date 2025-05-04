@@ -6,6 +6,7 @@ import jakarta.validation.constraints.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "answer_options") // Define explicitamente o nome da tabela como "answer_options"
 public class AnswerOption {
 
     @Id

@@ -37,6 +37,9 @@ public class SingleChoiceTaskValidator {
             if (option.getOption().equalsIgnoreCase(statement)) {
                 throw new TaskException("Option text cannot be the same as the statement.");
             }
+            if (option.getOption().length() < 4 || option.getOption().length() > 80) {
+                throw new TaskException("Option text must be between 4 and 80 characters.");
+            }
         }
     }
 }
