@@ -1,11 +1,12 @@
 package br.com.alura.AluraFake.task;
 
+import br.com.alura.AluraFake.course.Course;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Service // Certifique-se de que esta anotação está presente
+@Service
 public class TaskOrderManager {
 
     private final TaskRepository taskRepository;
@@ -20,18 +21,27 @@ public class TaskOrderManager {
     }
 
     @Transactional
-    public void reorderTasks(Long courseId, int newOrder) {
-        List<Task> tasksToReorder = taskRepository.findByCourseIdAndOrderGreaterThanEqual(courseId, newOrder);
+    public void reorderTasks(Long courseId, int order) {
+        List<Task> tasksToReorder = taskRepository.findByCourseIdAndOrderGreaterThanEqual(courseId, order);
         for (Task task : tasksToReorder) {
             task.setOrder(task.getOrder() + 1);
         }
         taskRepository.saveAll(tasksToReorder);
     }
 
+    @Transactional
     public void validateContinuousOrder(Long courseId) {
-        boolean isContinuous = taskRepository.hasContinuousOrderSequence(courseId);
-        if (!isContinuous) {
-            throw new TaskException("Task orders must form a continuous sequence without gaps.");
+        List<Integer> taskOrders = taskRepository.findTaskOrdersByCourseId(courseId);
+        for (int i = 1; i <= taskOrders.size(); i++) {
+            if (!taskOrders.contains(i)) {
+                throw new TaskException("Task orders must form a continuous sequence without gaps.");
+            }
+        }
+    }
+
+    public void validatePreviousOrderExists(Long courseId, int order) {
+        if (order > 1 && !taskRepository.existsByCourseIdAndTaskOrder(courseId, order - 1)) {
+            throw new TaskException("The previous order does not exist. Task orders must be continuous.");
         }
     }
 }

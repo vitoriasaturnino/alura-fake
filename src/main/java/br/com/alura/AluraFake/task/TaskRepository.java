@@ -8,21 +8,26 @@ import java.util.List;
 
 public interface TaskRepository extends JpaRepository<Task, Long> {
 
-    List<Task> findByCourseId(Long courseId);
+    @Query("SELECT t FROM Task t WHERE t.course.id = :courseId ORDER BY t.taskOrder ASC")
+    List<Task> findByCourseId(@Param("courseId") Long courseId);
 
-    boolean existsByCourseIdAndOrder(Long courseId, int order);
+    boolean existsByCourseIdAndTaskOrder(Long courseId, int taskOrder); // Corrigido para usar taskOrder
 
-    @Query("SELECT MAX(t.order) FROM Task t WHERE t.course.id = :courseId")
+    @Query("SELECT MAX(t.taskOrder) FROM Task t WHERE t.course.id = :courseId")
     Integer findMaxOrderByCourseId(@Param("courseId") Long courseId);
 
-    @Query("SELECT t FROM Task t WHERE t.course.id = :courseId AND t.order >= :order")
+    @Query("SELECT t FROM Task t WHERE t.course.id = :courseId AND t.taskOrder >= :order ORDER BY t.taskOrder ASC")
     List<Task> findByCourseIdAndOrderGreaterThanEqual(@Param("courseId") Long courseId, @Param("order") int order);
 
     @Query("SELECT t.type, COUNT(t) FROM Task t WHERE t.course.id = :courseId GROUP BY t.type")
     List<Object[]> countTasksByTypeForCourse(@Param("courseId") Long courseId);
 
-    @Query("SELECT COUNT(t) = (MAX(t.order) - MIN(t.order) + 1) FROM Task t WHERE t.course.id = :courseId")
+    @Query("SELECT CASE WHEN COUNT(t) = (MAX(t.taskOrder) - MIN(t.taskOrder) + 1) THEN TRUE ELSE FALSE END " +
+           "FROM Task t WHERE t.course.id = :courseId")
     boolean hasContinuousOrderSequence(@Param("courseId") Long courseId);
 
     boolean existsByCourseIdAndType(Long id, Type type);
+
+    @Query("SELECT t.taskOrder FROM Task t WHERE t.course.id = :courseId ORDER BY t.taskOrder ASC")
+    List<Integer> findTaskOrdersByCourseId(@Param("courseId") Long courseId);
 }
