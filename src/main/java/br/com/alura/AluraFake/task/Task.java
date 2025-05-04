@@ -29,7 +29,7 @@ public abstract class Task {
 
     @Column(name = "task_order", nullable = false)
     @Positive
-    private int taskOrder; // Adicionado o atributo taskOrder
+    private int order;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "task_type", nullable = false, insertable = false, updatable = false)
@@ -61,14 +61,18 @@ public abstract class Task {
     }
 
     public int getOrder() {
-        return taskOrder;
+        return order;
     }
 
-    public void setOrder(int taskOrder) {
-        this.taskOrder = taskOrder;
+    public void setOrder(int order) {
+        this.order = order;
     }
 
     public Type getType() {
         return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type; // Implementação do método setType()
     }
 }

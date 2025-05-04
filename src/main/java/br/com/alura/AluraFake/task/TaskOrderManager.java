@@ -1,6 +1,7 @@
 package br.com.alura.AluraFake.task;
 
 import br.com.alura.AluraFake.course.Course;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,17 +17,30 @@ public class TaskOrderManager {
     }
 
     public int getNextOrder(Long courseId) {
-        Integer maxOrder = taskRepository.findMaxOrderByCourseId(courseId);
-        return (maxOrder == null) ? 1 : maxOrder + 1;
+        return taskRepository.findMaxOrderByCourseId(courseId).orElse(0) + 1;
     }
 
     @Transactional
     public void reorderTasks(Long courseId, int order) {
-        List<Task> tasksToReorder = taskRepository.findByCourseIdAndOrderGreaterThanEqual(courseId, order);
-        for (Task task : tasksToReorder) {
-            task.setOrder(task.getOrder() + 1);
+        List<Task> tasksToReorder = taskRepository.findByCourseIdAndOrderGreaterThanEqual(courseId, order, Sort.by("order"));
+
+        if (tasksToReorder.isEmpty()) {
+            return;
         }
-        taskRepository.saveAll(tasksToReorder);
+
+        for (Task task : tasksToReorder) {
+            task.setOrder(task.getOrder() + 1000); 
+            taskRepository.save(task);
+        }
+
+        taskRepository.flush();
+
+        for (Task task : tasksToReorder) {
+            task.setOrder(task.getOrder() - 999);
+            taskRepository.save(task);
+        }
+
+        taskRepository.flush();
     }
 
     @Transactional
@@ -40,7 +54,7 @@ public class TaskOrderManager {
     }
 
     public void validatePreviousOrderExists(Long courseId, int order) {
-        if (order > 1 && !taskRepository.existsByCourseIdAndTaskOrder(courseId, order - 1)) {
+        if (order > 1 && !taskRepository.existsByCourseIdAndOrder(courseId, order - 1)) {
             throw new TaskException("The previous order does not exist. Task orders must be continuous.");
         }
     }
