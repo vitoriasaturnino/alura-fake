@@ -40,37 +40,46 @@ public class Course {
     }
 
     public Long getId() {
+
         return id;
     }
 
     public LocalDateTime getCreatedAt() {
+
         return createdAt;
     }
 
     public String getTitle() {
+
         return title;
     }
 
     public void setStatus(Status status) {
+
         this.status = status;
     }
 
     public User getInstructor() {
+
         return instructor;
     }
 
     public String getDescription() {
-        return null;
+
+        return description;
     }
 
     public Status getStatus() {
-        return status;
+
+         return status;
     }
 
     public LocalDateTime getPublishedAt() {
+
         return publishedAt;
     }
 
-    public void setPublishedAt(LocalDateTime now) {
+    public void setPublishedAt(
+            LocalDateTime now) {
     }
 }
