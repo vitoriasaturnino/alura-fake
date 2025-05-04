@@ -79,7 +79,7 @@ public class Course {
         return publishedAt;
     }
 
-    public void setPublishedAt(
-            LocalDateTime now) {
+    public void setPublishedAt(LocalDateTime publishedAt) {
+        this.publishedAt = publishedAt; // Corrigido para atualizar o valor de published_at
     }
 }

@@ -69,7 +69,7 @@ public class CourseController {
         coursePublicationValidator.validate(course);
 
         course.setStatus(Status.PUBLISHED);
-        course.setPublishedAt(LocalDateTime.now());
+        course.setPublishedAt(LocalDateTime.now()); // Certifique-se de que o valor está sendo definido corretamente
 
         courseRepository.save(course);
 
