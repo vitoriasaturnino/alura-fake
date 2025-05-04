@@ -7,6 +7,7 @@ import jakarta.validation.constraints.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "tasks") // Define explicitamente o nome da tabela como "tasks"
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "task_type")
 public abstract class Task {
