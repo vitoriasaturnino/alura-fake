@@ -60,7 +60,7 @@ public class Course {
     }
 
     public String getDescription() {
-        return description;
+        return null;
     }
 
     public Status getStatus() {
@@ -69,5 +69,8 @@ public class Course {
 
     public LocalDateTime getPublishedAt() {
         return publishedAt;
+    }
+
+    public void setPublishedAt(LocalDateTime now) {
     }
 }

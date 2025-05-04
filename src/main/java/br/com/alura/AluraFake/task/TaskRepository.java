@@ -23,4 +23,6 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     @Query("SELECT COUNT(t) = (MAX(t.order) - MIN(t.order) + 1) FROM Task t WHERE t.course.id = :courseId")
     boolean hasContinuousOrderSequence(@Param("courseId") Long courseId);
+
+    boolean existsByCourseIdAndType(Long id, Type type);
 }

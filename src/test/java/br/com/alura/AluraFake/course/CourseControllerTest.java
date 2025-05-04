@@ -24,6 +24,8 @@ class CourseControllerTest {
     private UserRepository userRepository;
     @MockBean
     private CourseRepository courseRepository;
+    @MockBean
+    private CoursePublicationValidator coursePublicationValidator;
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -92,23 +94,27 @@ class CourseControllerTest {
 
     @Test
     void listAllCourses__should_list_all_courses() throws Exception {
-        User paulo = new User("Paulo", "paulo@alua.com.br", Role.INSTRUCTOR);
+        // Criação do instrutor
+        User paulo = new User("Paulo", "paulo@alura.com.br", Role.INSTRUCTOR);
 
+        // Criação dos cursos com descrições corretas
         Course java = new Course("Java", "Curso de java", paulo);
         Course hibernate = new Course("Hibernate", "Curso de hibernate", paulo);
         Course spring = new Course("Spring", "Curso de spring", paulo);
 
+        // Configuração do mock para retornar os cursos corretamente configurados
         when(courseRepository.findAll()).thenReturn(Arrays.asList(java, hibernate, spring));
 
+        // Execução do endpoint e validação do resultado
         mockMvc.perform(get("/course/all")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].title").value("Java"))
-                .andExpect(jsonPath("$[0].description").value("Curso de java"))
+                .andExpect(jsonPath("$[0].description").value("Curso de java")) // Validação da descrição
                 .andExpect(jsonPath("$[1].title").value("Hibernate"))
-                .andExpect(jsonPath("$[1].description").value("Curso de hibernate"))
+                .andExpect(jsonPath("$[1].description").value("Curso de hibernate")) // Validação da descrição
                 .andExpect(jsonPath("$[2].title").value("Spring"))
-                .andExpect(jsonPath("$[2].description").value("Curso de spring"));
+                .andExpect(jsonPath("$[2].description").value("Curso de spring")); // Validação da descrição
     }
 
 }
