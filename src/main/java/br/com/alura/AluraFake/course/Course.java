@@ -40,50 +40,42 @@ public class Course {
     }
 
     public Long getId() {
-
         return id;
     }
 
     public LocalDateTime getCreatedAt() {
-
         return createdAt;
     }
 
     public String getTitle() {
-
         return title;
     }
 
     public void setStatus(Status status) {
-
         this.status = status;
     }
 
     public User getInstructor() {
-
         return instructor;
     }
 
     public String getDescription() {
-
         return description;
     }
 
     public Status getStatus() {
-
          return status;
     }
 
     public LocalDateTime getPublishedAt() {
-
         return publishedAt;
     }
 
     public void setPublishedAt(LocalDateTime publishedAt) {
-        this.publishedAt = publishedAt; // Corrigido para atualizar o valor de published_at
+        this.publishedAt = publishedAt;
     }
 
     public void setId(Long id) {
-        this.id = id; // Permite configurar o ID manualmente durante os testes
+        this.id = id;
     }
 }

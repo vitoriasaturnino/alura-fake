@@ -50,8 +50,8 @@ public class DataSeeder {
     @PostConstruct
     public void seed() {
         seedUsers();
-        seedCourses(); // Certifique-se de que os cursos sejam criados primeiro
-        seedTasks(); // Remova a validação redundante
+        seedCourses();
+        seedTasks();
     }
 
     private void seedUsers() {
@@ -72,21 +72,20 @@ public class DataSeeder {
             Course designPatternsCourse = new Course("Design Patterns", "Padrões de projeto em Java", instructor);
             designPatternsCourse.setStatus(Status.PUBLISHED);
 
-            courseRepository.saveAndFlush(javaCourse); // Salva e confirma imediatamente
-            courseRepository.saveAndFlush(springCourse); // Salva e confirma imediatamente
-            courseRepository.saveAndFlush(designPatternsCourse); // Salva e confirma imediatamente
+            courseRepository.saveAndFlush(javaCourse);
+            courseRepository.saveAndFlush(springCourse);
+            courseRepository.saveAndFlush(designPatternsCourse);
         }
     }
 
     private void seedTasks() {
-        // Ensure the required courses exist before seeding tasks
         Optional<Course> javaCourseOpt = courseRepository.findByTitle("Java Básico");
         Optional<Course> springCourseOpt = courseRepository.findByTitle("Spring Framework");
         Optional<Course> designPatternsCourseOpt = courseRepository.findByTitle("Design Patterns");
 
         if (javaCourseOpt.isEmpty() || springCourseOpt.isEmpty() || designPatternsCourseOpt.isEmpty()) {
             System.err.println("Required courses not found. Skipping task seeding.");
-            return; // Exit if any required course is missing
+            return;
         }
 
         Course javaCourse = javaCourseOpt.get();
