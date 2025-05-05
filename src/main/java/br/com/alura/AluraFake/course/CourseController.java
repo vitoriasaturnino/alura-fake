@@ -2,8 +2,9 @@ package br.com.alura.AluraFake.course;
 
 import br.com.alura.AluraFake.user.*;
 import br.com.alura.AluraFake.util.ErrorItemDTO;
-import br.com.alura.AluraFake.course.Status;
-import br.com.alura.AluraFake.course.CoursePublicationException;
+import br.com.alura.AluraFake.task.TaskRepository;
+import br.com.alura.AluraFake.task.TaskOrderManager;
+import br.com.alura.AluraFake.task.Type;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -12,10 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.*;
-
-import br.com.alura.AluraFake.task.TaskRepository; 
-import br.com.alura.AluraFake.task.TaskOrderManager; 
-import br.com.alura.AluraFake.task.Type; 
 
 @RestController
 @RequestMapping("/course")
