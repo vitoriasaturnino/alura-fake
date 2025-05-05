@@ -18,7 +18,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     boolean existsByCourseIdAndOrder(Long courseId, int order); // Corrigido para usar 'order'
 
     @Query("SELECT t FROM Task t WHERE t.course.id = :courseId AND t.order >= :order ORDER BY t.order ASC")
-    List<Task> findByCourseIdAndOrderGreaterThanEqual(@Param("courseId") Long courseId, @Param("order") int order, Sort sort);
+    List<Task> findByCourseIdAndOrderGreaterThanEqual(@Param("courseId") Long courseId, @Param("order") int order);
 
     @Query("SELECT t.type, COUNT(t) FROM Task t WHERE t.course.id = :courseId GROUP BY t.type")
     List<Object[]> countTasksByTypeForCourse(@Param("courseId") Long courseId);

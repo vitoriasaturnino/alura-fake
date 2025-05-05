@@ -22,7 +22,7 @@ public class TaskOrderManager {
 
     @Transactional
     public synchronized void reorderTasks(Long courseId, int order) {
-        List<Task> tasksToReorder = taskRepository.findByCourseIdAndOrderGreaterThanEqual(courseId, order, Sort.by("order"));
+        List<Task> tasksToReorder = taskRepository.findByCourseIdAndOrderGreaterThanEqual(courseId, order);
 
         if (tasksToReorder.isEmpty()) {
             return;

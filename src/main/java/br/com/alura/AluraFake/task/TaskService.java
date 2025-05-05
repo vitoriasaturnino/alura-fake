@@ -1,5 +1,8 @@
 package br.com.alura.AluraFake.task;
 
+import br.com.alura.AluraFake.task.open_text.OpenTextTask;
+import br.com.alura.AluraFake.task.single_choice.SingleChoiceTask;
+import br.com.alura.AluraFake.task.multiple_choice.MultipleChoiceTask;
 import br.com.alura.AluraFake.course.Course;
 import br.com.alura.AluraFake.course.CourseRepository;
 import br.com.alura.AluraFake.task.TaskDTO;
@@ -34,14 +37,14 @@ public class TaskService {
         // Reordenar tarefas existentes usando abordagem em duas fases
         reorderTasksForInsertion(course.getId(), requestedOrder);
 
-        // Criar e salvar a nova tarefa
-        Task task = new Task() {
-            // Implementação anônima para a classe abstrata Task
-        };
-        task.setCourse(course);
-        task.setStatement(taskDTO.getStatement());
-        task.setOrder(requestedOrder);
-        task.setType(taskDTO.getType());
+        // Criar e salvar a nova tarefa com base no tipo
+        Task task;
+        switch (taskDTO.getType()) {
+            case OPEN_TEXT -> task = new OpenTextTask(course, taskDTO.getStatement(), requestedOrder);
+            case SINGLE_CHOICE -> task = new SingleChoiceTask(course, taskDTO.getStatement(), requestedOrder);
+            case MULTIPLE_CHOICE -> task = new MultipleChoiceTask(course, taskDTO.getStatement(), requestedOrder);
+            default -> throw new IllegalArgumentException("Invalid task type: " + taskDTO.getType());
+        }
 
         return taskRepository.save(task);
     }
@@ -61,7 +64,7 @@ public class TaskService {
     }
 
     private void reorderTasksForInsertion(Long courseId, int newTaskOrder) {
-        List<Task> tasksToReorder = taskRepository.findByCourseIdAndOrderGreaterThanEqual(courseId, newTaskOrder, Sort.by("order"));
+        List<Task> tasksToReorder = taskRepository.findByCourseIdAndOrderGreaterThanEqual(courseId, newTaskOrder);
 
         if (tasksToReorder.isEmpty()) {
             return;
