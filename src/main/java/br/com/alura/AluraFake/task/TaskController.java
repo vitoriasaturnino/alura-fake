@@ -2,6 +2,7 @@ package br.com.alura.AluraFake.task;
 
 import br.com.alura.AluraFake.course.Course;
 import br.com.alura.AluraFake.course.CourseRepository;
+import br.com.alura.AluraFake.util.ErrorItemDTO;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,23 +49,27 @@ public class TaskController {
     @PostMapping("/new/opentext")
     @Transactional
     public ResponseEntity<?> createOpenTextTask(@RequestBody OpenTextTaskDTO dto) {
-        Course course = courseRepository.findById(dto.getCourseId())
-                .orElseThrow(() -> new TaskException("Course not found."));
+        try {
+            Course course = courseRepository.findById(dto.getCourseId())
+                    .orElseThrow(() -> new TaskException("Course not found."));
 
-        openTextTaskValidator.validate(dto, course);
+            openTextTaskValidator.validate(dto, course);
 
-        taskOrderManager.validatePreviousOrderExists(course.getId(), dto.getOrder());
+            taskOrderManager.validatePreviousOrderExists(course.getId(), dto.getOrder());
 
-        if (dto.getOrder() == 0) {
-            dto = new OpenTextTaskDTO(dto.getCourseId(), dto.getStatement(), taskOrderManager.getNextOrder(course.getId()));
-        } else {
-            taskOrderManager.reorderTasks(course.getId(), dto.getOrder());
+            if (dto.getOrder() == 0) {
+                dto = new OpenTextTaskDTO(dto.getCourseId(), dto.getStatement(), taskOrderManager.getNextOrder(course.getId()));
+            } else {
+                taskOrderManager.reorderTasks(course.getId(), dto.getOrder());
+            }
+
+            OpenTextTask task = dto.toEntity(course);
+            openTextTaskRepository.save(task);
+
+            return ResponseEntity.ok(task);
+        } catch (TaskException e) {
+            return ResponseEntity.badRequest().body(new ErrorItemDTO("task", e.getMessage()));
         }
-
-        OpenTextTask task = dto.toEntity(course);
-        openTextTaskRepository.save(task);
-
-        return ResponseEntity.ok(task);
     }
 
     @PostMapping("/new/singlechoice")

@@ -63,17 +63,21 @@ public class CourseController {
     @PostMapping("/{id}/publish")
     @Transactional
     public ResponseEntity<?> publishCourse(@PathVariable Long id) {
-        Course course = courseRepository.findById(id)
-                .orElseThrow(() -> new CoursePublicationException("Course not found."));
+        try {
+            Course course = courseRepository.findById(id)
+                    .orElseThrow(() -> new CoursePublicationException("Course not found."));
 
-        coursePublicationValidator.validate(course);
+            coursePublicationValidator.validate(course);
 
-        course.setStatus(Status.PUBLISHED);
-        course.setPublishedAt(LocalDateTime.now()); // Certifique-se de que o valor está sendo definido corretamente
+            course.setStatus(Status.PUBLISHED);
+            course.setPublishedAt(LocalDateTime.now());
 
-        courseRepository.save(course);
+            courseRepository.save(course);
 
-        return ResponseEntity.ok(course);
+            return ResponseEntity.ok(course);
+        } catch (CoursePublicationException e) {
+            return ResponseEntity.badRequest().body(new ErrorItemDTO("course", e.getMessage()));
+        }
     }
 
 }

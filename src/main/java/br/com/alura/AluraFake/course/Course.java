@@ -82,4 +82,8 @@ public class Course {
     public void setPublishedAt(LocalDateTime publishedAt) {
         this.publishedAt = publishedAt; // Corrigido para atualizar o valor de published_at
     }
+
+    public void setId(Long id) {
+        this.id = id; // Permite configurar o ID manualmente durante os testes
+    }
 }

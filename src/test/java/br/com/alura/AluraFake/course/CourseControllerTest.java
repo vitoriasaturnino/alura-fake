@@ -1,5 +1,8 @@
 package br.com.alura.AluraFake.course;
 
+import br.com.alura.AluraFake.task.TaskOrderManager;
+import br.com.alura.AluraFake.task.TaskRepository;
+import br.com.alura.AluraFake.task.Type;
 import br.com.alura.AluraFake.user.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -24,6 +27,10 @@ class CourseControllerTest {
     private UserRepository userRepository;
     @MockBean
     private CourseRepository courseRepository;
+    @MockBean
+    private TaskRepository taskRepository;
+    @MockBean
+    private TaskOrderManager taskOrderManager;
     @MockBean
     private CoursePublicationValidator coursePublicationValidator;
     @Autowired
@@ -94,18 +101,15 @@ class CourseControllerTest {
 
     @Test
     void listAllCourses__should_list_all_courses() throws Exception {
-        // Criação do instrutor
+
         User paulo = new User("Paulo", "paulo@alura.com.br", Role.INSTRUCTOR);
 
-        // Criação dos cursos com descrições corretas
         Course java = new Course("Java", "Curso de java", paulo);
         Course hibernate = new Course("Hibernate", "Curso de hibernate", paulo);
         Course spring = new Course("Spring", "Curso de spring", paulo);
 
-        // Configuração do mock para retornar os cursos corretamente configurados
         when(courseRepository.findAll()).thenReturn(Arrays.asList(java, hibernate, spring));
 
-        // Execução do endpoint e validação do resultado
         mockMvc.perform(get("/course/all")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -115,6 +119,43 @@ class CourseControllerTest {
                 .andExpect(jsonPath("$[1].description").value("Curso de hibernate")) // Validação da descrição
                 .andExpect(jsonPath("$[2].title").value("Spring"))
                 .andExpect(jsonPath("$[2].description").value("Curso de spring")); // Validação da descrição
+    }
+
+    @Test
+    void should_PublishCourse_When_RequirementsAreMet() throws Exception {
+        User instructor = mock(User.class);
+        when(instructor.isInstructor()).thenReturn(true);
+
+        Course course = new Course("Java", "Curso de Java", instructor);
+        course.setStatus(Status.BUILDING);
+
+        when(courseRepository.findById(1L)).thenReturn(Optional.of(course));
+        when(taskRepository.existsByCourseIdAndType(1L, Type.OPEN_TEXT)).thenReturn(true);
+        when(taskRepository.existsByCourseIdAndType(1L, Type.SINGLE_CHOICE)).thenReturn(true);
+        when(taskRepository.existsByCourseIdAndType(1L, Type.MULTIPLE_CHOICE)).thenReturn(true);
+
+        mockMvc.perform(post("/course/1/publish"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void should_ReturnBadRequest_When_CourseDoesNotMeetRequirements() throws Exception {
+        User instructor = mock(User.class);
+        when(instructor.isInstructor()).thenReturn(true);
+
+        Course course = new Course("Java", "Curso de Java", instructor);
+        course.setStatus(Status.BUILDING);
+
+        when(courseRepository.findById(1L)).thenReturn(Optional.of(course));
+
+        // Configura o mock para lançar a exceção CoursePublicationException
+        doThrow(new CoursePublicationException("Course must have at least one OpenTextTask."))
+                .when(coursePublicationValidator).validate(course);
+
+        mockMvc.perform(post("/course/1/publish"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.field").value("course"))
+                .andExpect(jsonPath("$.message").value("Course must have at least one OpenTextTask."));
     }
 
 }

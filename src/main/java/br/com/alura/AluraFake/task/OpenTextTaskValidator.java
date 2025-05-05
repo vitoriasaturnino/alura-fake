@@ -14,7 +14,7 @@ public class OpenTextTaskValidator {
 
     public void validate(OpenTextTaskDTO dto, Course course) {
         taskValidator.validateCourseStatus(course);
-        taskValidator.validateStatement(dto.getStatement());
+        taskValidator.validateStatement(dto.getStatement()); // Certifique-se de que este método lança uma exceção para statements inválidos
         taskValidator.validateOrder(dto.getOrder());
     }
 }
