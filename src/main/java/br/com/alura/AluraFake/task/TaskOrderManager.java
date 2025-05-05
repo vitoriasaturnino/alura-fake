@@ -16,12 +16,12 @@ public class TaskOrderManager {
         this.taskRepository = taskRepository;
     }
 
-    public int getNextOrder(Long courseId) {
+    public synchronized int getNextOrder(Long courseId) {
         return taskRepository.findMaxOrderByCourseId(courseId).orElse(0) + 1;
     }
 
     @Transactional
-    public void reorderTasks(Long courseId, int order) {
+    public synchronized void reorderTasks(Long courseId, int order) {
         List<Task> tasksToReorder = taskRepository.findByCourseIdAndOrderGreaterThanEqual(courseId, order, Sort.by("order"));
 
         if (tasksToReorder.isEmpty()) {
@@ -53,7 +53,7 @@ public class TaskOrderManager {
         }
     }
 
-    public void validatePreviousOrderExists(Long courseId, int order) {
+    public synchronized void validatePreviousOrderExists(Long courseId, int order) {
         if (order > 1 && !taskRepository.existsByCourseIdAndOrder(courseId, order - 1)) {
             throw new TaskException("The previous order does not exist. Task orders must be continuous.");
         }
