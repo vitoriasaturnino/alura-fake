@@ -53,10 +53,16 @@ spring:
 
 ### 3. Executar o projeto
 
-Compile e execute o projeto com Maven:
+Compile o projeto e gere o pacote `.jar`:
 
 ```bash
-mvn spring-boot:run
+mvn clean package
+```
+
+Em seguida, execute a aplicação:
+
+```bash
+java -jar target/AluraFake-0.0.1-SNAPSHOT.jar
 ```
 
 O servidor ficará disponível em [http://localhost:8080](http://localhost:8080).
