@@ -1,9 +1,11 @@
-package br.com.alura.AluraFake.task;
+package br.com.alura.AluraFake.task.answer_options;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDateTime;
+
+import br.com.alura.AluraFake.task.Task;
 
 @Entity
 @Table(name = "answer_options") // Define explicitamente o nome da tabela como "answer_options"

@@ -1,10 +1,11 @@
-package br.com.alura.AluraFake.task;
+package br.com.alura.AluraFake.task.single_choice;
 
 import br.com.alura.AluraFake.course.Course;
+import br.com.alura.AluraFake.task.answer_options.AnswerOptionDTO;
 import jakarta.validation.constraints.*;
 import java.util.List;
 
-public class MultipleChoiceTaskDTO {
+public class SingleChoiceTaskDTO {
 
     @NotNull
     private Long courseId;
@@ -17,12 +18,12 @@ public class MultipleChoiceTaskDTO {
     private int order;
 
     @NotNull
-    @Size(min = 3, max = 5)
+    @Size(min = 2, max = 5)
     private List<AnswerOptionDTO> options;
 
-    public MultipleChoiceTaskDTO() {}
+    public SingleChoiceTaskDTO() {}
 
-    public MultipleChoiceTaskDTO(Long courseId, String statement, int order, List<AnswerOptionDTO> options) {
+    public SingleChoiceTaskDTO(Long courseId, String statement, int order, List<AnswerOptionDTO> options) {
         this.courseId = courseId;
         this.statement = statement;
         this.order = order;
@@ -45,8 +46,8 @@ public class MultipleChoiceTaskDTO {
         return options;
     }
 
-    public MultipleChoiceTask toEntity(Course course) {
-        MultipleChoiceTask task = new MultipleChoiceTask();
+    public SingleChoiceTask toEntity(Course course) {
+        SingleChoiceTask task = new SingleChoiceTask();
         task.setCourse(course);
         task.setStatement(statement);
         task.setOrder(order);

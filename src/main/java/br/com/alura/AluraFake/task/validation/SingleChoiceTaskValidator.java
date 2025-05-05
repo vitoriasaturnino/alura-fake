@@ -1,37 +1,37 @@
-package br.com.alura.AluraFake.task;
+package br.com.alura.AluraFake.task.validation;
 
 import br.com.alura.AluraFake.course.Course;
+import br.com.alura.AluraFake.task.TaskException;
+import br.com.alura.AluraFake.task.TaskValidator;
+import br.com.alura.AluraFake.task.answer_options.AnswerOptionDTO;
+import br.com.alura.AluraFake.task.single_choice.SingleChoiceTaskDTO;
+
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
-public class MultipleChoiceTaskValidator {
+public class SingleChoiceTaskValidator {
 
     private final TaskValidator taskValidator;
 
-    public MultipleChoiceTaskValidator(TaskValidator taskValidator) {
+    public SingleChoiceTaskValidator(TaskValidator taskValidator) {
         this.taskValidator = taskValidator;
     }
 
-    public void validate(MultipleChoiceTaskDTO dto, Course course) {
+    public void validate(SingleChoiceTaskDTO dto, Course course) {
         taskValidator.validateCourseStatus(course);
         taskValidator.validateStatement(dto.getStatement());
         taskValidator.validateOrder(dto.getOrder());
 
         List<AnswerOptionDTO> options = dto.getOptions();
-        if (options.size() < 3 || options.size() > 5) {
-            throw new TaskException("MultipleChoiceTask must have between 3 and 5 options.");
+        if (options.size() < 2 || options.size() > 5) {
+            throw new TaskException("SingleChoiceTask must have between 2 and 5 options.");
         }
 
         long correctCount = options.stream().filter(AnswerOptionDTO::getIsCorrect).count();
-        if (correctCount < 2) {
-            throw new TaskException("MultipleChoiceTask must have at least two correct options.");
-        }
-
-        long incorrectCount = options.size() - correctCount;
-        if (incorrectCount < 1) {
-            throw new TaskException("MultipleChoiceTask must have at least one incorrect option.");
+        if (correctCount != 1) {
+            throw new TaskException("SingleChoiceTask must have exactly one correct option.");
         }
 
         validateOptionTexts(options, dto.getStatement());

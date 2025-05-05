@@ -1,4 +1,4 @@
-package br.com.alura.AluraFake.task;
+package br.com.alura.AluraFake.task.answer_options;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

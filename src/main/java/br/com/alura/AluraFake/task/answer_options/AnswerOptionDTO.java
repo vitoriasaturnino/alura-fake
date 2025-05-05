@@ -1,5 +1,6 @@
-package br.com.alura.AluraFake.task;
+package br.com.alura.AluraFake.task.answer_options;
 
+import br.com.alura.AluraFake.task.Task;
 import jakarta.validation.constraints.*;
 
 public class AnswerOptionDTO {

@@ -2,7 +2,15 @@ package br.com.alura.AluraFake.task;
 
 import br.com.alura.AluraFake.course.Course;
 import br.com.alura.AluraFake.course.CourseRepository;
-import br.com.alura.AluraFake.user.User; // Adicionada a importação da classe User
+import br.com.alura.AluraFake.task.answer_options.AnswerOptionRepository;
+import br.com.alura.AluraFake.task.multiple_choice.MultipleChoiceTaskRepository;
+import br.com.alura.AluraFake.task.multiple_choice.MultipleChoiceTaskValidator;
+import br.com.alura.AluraFake.task.open_text.OpenTextTaskDTO;
+import br.com.alura.AluraFake.task.open_text.OpenTextTaskRepository;
+import br.com.alura.AluraFake.task.open_text.OpenTextTaskValidator;
+import br.com.alura.AluraFake.task.single_choice.SingleChoiceTaskRepository;
+import br.com.alura.AluraFake.task.single_choice.SingleChoiceTaskValidator;
+import br.com.alura.AluraFake.user.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

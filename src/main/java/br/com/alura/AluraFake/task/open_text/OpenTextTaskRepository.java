@@ -1,4 +1,4 @@
-package br.com.alura.AluraFake.task;
+package br.com.alura.AluraFake.task.open_text;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

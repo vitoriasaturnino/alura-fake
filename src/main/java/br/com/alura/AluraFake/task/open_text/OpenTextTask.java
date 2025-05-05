@@ -1,7 +1,8 @@
-package br.com.alura.AluraFake.task;
+package br.com.alura.AluraFake.task.open_text;
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import br.com.alura.AluraFake.task.Task;
 import jakarta.persistence.*;
 
 @Entity

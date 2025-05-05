@@ -1,4 +1,4 @@
-package br.com.alura.AluraFake.task;
+package br.com.alura.AluraFake.task.multiple_choice;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,6 +1,10 @@
 package br.com.alura.AluraFake.task;
 
 import br.com.alura.AluraFake.course.CourseRepository;
+import br.com.alura.AluraFake.task.answer_options.AnswerOptionDTO;
+import br.com.alura.AluraFake.task.multiple_choice.MultipleChoiceTaskDTO;
+import br.com.alura.AluraFake.task.open_text.OpenTextTaskDTO;
+import br.com.alura.AluraFake.task.single_choice.SingleChoiceTaskDTO;
 import br.com.alura.AluraFake.user.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
