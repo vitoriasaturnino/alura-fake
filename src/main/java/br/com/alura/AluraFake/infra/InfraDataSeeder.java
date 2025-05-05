@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 
 @Component
-public class DataSeeder implements CommandLineRunner {
+public class InfraDataSeeder implements CommandLineRunner {
 
     @Value("${spring.profiles.active:}")
     private String activeProfile;
@@ -17,7 +17,7 @@ public class DataSeeder implements CommandLineRunner {
     private final UserRepository userRepository;
     private final CourseRepository courseRepository;
 
-    public DataSeeder(UserRepository userRepository, CourseRepository courseRepository) {
+    public InfraDataSeeder(UserRepository userRepository, CourseRepository courseRepository) {
         this.userRepository = userRepository;
         this.courseRepository = courseRepository;
     }
