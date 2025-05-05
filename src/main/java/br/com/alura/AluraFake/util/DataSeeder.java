@@ -20,6 +20,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @Profile({"dev", "test"})
@@ -49,8 +50,8 @@ public class DataSeeder {
     @PostConstruct
     public void seed() {
         seedUsers();
-        seedCourses();
-        seedTasks();
+        seedCourses(); // Certifique-se de que os cursos sejam criados primeiro
+        seedTasks(); // Remova a validação redundante
     }
 
     private void seedUsers() {
@@ -63,19 +64,34 @@ public class DataSeeder {
 
     private void seedCourses() {
         if (courseRepository.count() == 0) {
-            User instructor = userRepository.findByEmail("paulo@alura.com.br").orElseThrow();
+            User instructor = userRepository.findByEmail("paulo@alura.com.br").orElseThrow(() -> 
+                new IllegalStateException("Instructor not found. Ensure users are seeded first."));
+            
             Course javaCourse = new Course("Java Básico", "Aprenda os fundamentos de Java", instructor);
             Course springCourse = new Course("Spring Framework", "Desenvolvimento com Spring", instructor);
             Course designPatternsCourse = new Course("Design Patterns", "Padrões de projeto em Java", instructor);
             designPatternsCourse.setStatus(Status.PUBLISHED);
-            courseRepository.saveAll(List.of(javaCourse, springCourse, designPatternsCourse));
+
+            courseRepository.saveAndFlush(javaCourse); // Salva e confirma imediatamente
+            courseRepository.saveAndFlush(springCourse); // Salva e confirma imediatamente
+            courseRepository.saveAndFlush(designPatternsCourse); // Salva e confirma imediatamente
         }
     }
 
     private void seedTasks() {
-        Course javaCourse = courseRepository.findByTitle("Java Básico").orElseThrow();
-        Course springCourse = courseRepository.findByTitle("Spring Framework").orElseThrow();
-        Course designPatternsCourse = courseRepository.findByTitle("Design Patterns").orElseThrow();
+        // Ensure the required courses exist before seeding tasks
+        Optional<Course> javaCourseOpt = courseRepository.findByTitle("Java Básico");
+        Optional<Course> springCourseOpt = courseRepository.findByTitle("Spring Framework");
+        Optional<Course> designPatternsCourseOpt = courseRepository.findByTitle("Design Patterns");
+
+        if (javaCourseOpt.isEmpty() || springCourseOpt.isEmpty() || designPatternsCourseOpt.isEmpty()) {
+            System.err.println("Required courses not found. Skipping task seeding.");
+            return; // Exit if any required course is missing
+        }
+
+        Course javaCourse = javaCourseOpt.get();
+        Course springCourse = springCourseOpt.get();
+        Course designPatternsCourse = designPatternsCourseOpt.get();
 
         seedOpenTextTasks(javaCourse);
         seedSingleChoiceTasks(javaCourse);
@@ -169,50 +185,57 @@ public class DataSeeder {
     }
 
     private void seedEdgeCases(Course course) {
-        OpenTextTask openTextTask = new OpenTextTask();
-        openTextTask.setCourse(course);
-        openTextTask.setStatement("Explique o padrão Singleton.");
-        openTextTask.setOrder(1);
+        if (openTextTaskRepository.findByCourseIdAndStatement(course.getId(), "Explique o padrão Singleton.").isEmpty()) {
+            OpenTextTask openTextTask = new OpenTextTask();
+            openTextTask.setCourse(course);
+            openTextTask.setStatement("Explique o padrão Singleton.");
+            openTextTask.setOrder(1);
+            openTextTaskRepository.save(openTextTask);
+        }
 
-        SingleChoiceTask singleChoiceTask = new SingleChoiceTask();
-        singleChoiceTask.setCourse(course);
-        singleChoiceTask.setStatement("Qual é o objetivo do padrão Factory?");
-        singleChoiceTask.setOrder(2);
+        if (singleChoiceTaskRepository.findByCourseIdAndStatement(course.getId(), "Qual é o objetivo do padrão Factory?").isEmpty()) {
+            SingleChoiceTask singleChoiceTask = new SingleChoiceTask();
+            singleChoiceTask.setCourse(course);
+            singleChoiceTask.setStatement("Qual é o objetivo do padrão Factory?");
+            singleChoiceTask.setOrder(2);
 
-        AnswerOption option1 = new AnswerOption();
-        option1.setOptionText("Criar objetos");
-        option1.setCorrect(true);
+            AnswerOption option1 = new AnswerOption();
+            option1.setOptionText("Criar objetos");
+            option1.setCorrect(true);
 
-        AnswerOption option2 = new AnswerOption();
-        option2.setOptionText("Gerenciar memória");
-        option2.setCorrect(false);
+            AnswerOption option2 = new AnswerOption();
+            option2.setOptionText("Gerenciar memória");
+            option2.setCorrect(false);
 
-        MultipleChoiceTask multipleChoiceTask = new MultipleChoiceTask();
-        multipleChoiceTask.setCourse(course);
-        multipleChoiceTask.setStatement("Quais padrões são criacionais?");
-        multipleChoiceTask.setOrder(3);
+            singleChoiceTaskRepository.save(singleChoiceTask);
+            option1.setTask(singleChoiceTask);
+            option2.setTask(singleChoiceTask);
+            answerOptionRepository.saveAll(List.of(option1, option2));
+        }
 
-        AnswerOption option3 = new AnswerOption();
-        option3.setOptionText("Singleton");
-        option3.setCorrect(true);
+        if (multipleChoiceTaskRepository.findByCourseIdAndStatement(course.getId(), "Quais padrões são criacionais?").isEmpty()) {
+            MultipleChoiceTask multipleChoiceTask = new MultipleChoiceTask();
+            multipleChoiceTask.setCourse(course);
+            multipleChoiceTask.setStatement("Quais padrões são criacionais?");
+            multipleChoiceTask.setOrder(3);
 
-        AnswerOption option4 = new AnswerOption();
-        option4.setOptionText("Factory");
-        option4.setCorrect(true);
+            AnswerOption option3 = new AnswerOption();
+            option3.setOptionText("Singleton");
+            option3.setCorrect(true);
 
-        AnswerOption option5 = new AnswerOption();
-        option5.setOptionText("Observer");
-        option5.setCorrect(false);
+            AnswerOption option4 = new AnswerOption();
+            option4.setOptionText("Factory");
+            option4.setCorrect(true);
 
-        openTextTaskRepository.save(openTextTask);
-        singleChoiceTaskRepository.save(singleChoiceTask);
-        option1.setTask(singleChoiceTask);
-        option2.setTask(singleChoiceTask);
-        answerOptionRepository.saveAll(List.of(option1, option2));
-        multipleChoiceTaskRepository.save(multipleChoiceTask);
-        option3.setTask(multipleChoiceTask);
-        option4.setTask(multipleChoiceTask);
-        option5.setTask(multipleChoiceTask);
-        answerOptionRepository.saveAll(List.of(option3, option4, option5));
+            AnswerOption option5 = new AnswerOption();
+            option5.setOptionText("Observer");
+            option5.setCorrect(false);
+
+            multipleChoiceTaskRepository.save(multipleChoiceTask);
+            option3.setTask(multipleChoiceTask);
+            option4.setTask(multipleChoiceTask);
+            option5.setTask(multipleChoiceTask);
+            answerOptionRepository.saveAll(List.of(option3, option4, option5));
+        }
     }
 }
